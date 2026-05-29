@@ -22,7 +22,9 @@ namespace CrudProductos.Controllers
         // GET: Productos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Productos.ToListAsync());
+            return View(await _context.Productos
+            .OrderByDescending(p => p.Precio)
+            .ToListAsync());
         }
 
         // GET: Productos/Details/5
