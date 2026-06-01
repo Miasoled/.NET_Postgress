@@ -20,12 +20,59 @@ namespace CrudProductos.Controllers
         }
 
         // GET: Productos
-        public async Task<IActionResult> Index()
+        // public async Task<IActionResult> Index()
+        // {
+        //     return View(await _context.Productos
+        //     .OrderByDescending(p => p.Precio)
+        //     .ToListAsync());
+        // }
+
+        //Filtrar por stock menor a 5
+       public async Task<IActionResult> Index()
         {
-            return View(await _context.Productos
-            .OrderByDescending(p => p.Precio)
-            .ToListAsync());
+            string palabra = "ram";
+            var productos = await _context.Productos
+                .Where( p => EF.Functions.ILike(p.Descripcion, $"%{palabra}%") || EF.Functions.ILike(p.Nombre, $"%{palabra}%"))
+                .OrderBy( p => p.Precio)
+                .Take(5)
+                .ToListAsync();
+            return View(productos);
+                //Ejercicios de practica
+                // .FromSqlRaw("SELECT * FROM \"Productos\" WHERE \"Precio\" BETWEEN 500 AND 1000")
+                // .Select(p => new Producto
+                // .Where(p => p.Stock > 0)
+                // {
+                //     Id = p.Id,
+                //     Nombre = p.Nombre,
+                //     Precio = p.Precio,
+                //     Stock = p.Stock
+                // })
+                // .OrderBy(p => p.Nombre)
+                // .Where(p => p.Precio >= 500 && p.Precio <= 1000)
+                // //trae todos los registros que quiera
+                // .Take(3)
+                // //tomar los siguientes tres productos
+                // .Skip(3)
         }
+        /*public async Task<IActionResult> Index()
+        {
+            string nombre = "laptop lenovo";
+
+            var productos = await _context.Productos
+                .Where(p => EF.Functions.Collate(p.Nombre, "C") == nombre)
+                .ToListAsync();
+
+            return View(productos);
+        }*/
+        // public async Task<IActionResult> Index()
+        // {
+        //     var productos = await _context.Productos
+        //         .Where(p => Regex.IsMatch(p.Nombre, "^L"))
+        //         .OrderBy(p => p.Nombre)
+        //         .ToListAsync();
+
+        //     return View(productos);
+        // }
 
         // GET: Productos/Details/5
         public async Task<IActionResult> Details(int? id)
